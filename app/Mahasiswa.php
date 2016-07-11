@@ -48,6 +48,7 @@ class Mahasiswa extends Model
       }
     }
   }
+  /* end cek_service method */
 
   public function cek_mahasiswa($username, $password)
   {
@@ -78,24 +79,30 @@ class Mahasiswa extends Model
       if($user->password == '' || $user->nama == '')
       {
         $data = $this->ambil_service($username, $password);
-        DB::table('ref_mahasiswa')
-          ->where('nim', '=', $username)
-          ->update(array(
-              'password' => $data['password'],
-              'nama'     => $data['nama'],
-              'prodi'    => $data['prodi']
-          ));
+        if($data['status'] == 'sukses')
+        {
+          DB::table('ref_mahasiswa')
+            ->where('nim', '=', $username)
+            ->update(array(
+                'password' => $data['password'],
+                'nama'     => $data['nama'],
+                'prodi'    => $data['prodi']
+            ));
+        }
         return $data;
       }
       // jika  password tidak sama
       else if($user->password != $password)
       {
         $data = $this->ambil_service($username, $password);
-        DB::table('ref_mahasiswa')
-          ->where('nim', '=', $username)
-          ->update(array(
-              'password' => $password
-          ));
+        if($data['status'] == 'sukses')
+        {
+          DB::table('ref_mahasiswa')
+            ->where('nim', '=', $username)
+            ->update(array(
+                'password' => $password
+            ));
+        }
         return $data;   
       }
       // jika user dan password sama
@@ -187,11 +194,45 @@ class Mahasiswa extends Model
 
     $hasil = json_decode($result);
 
-        DB::table('ref_mahasiswa')
-            ->where('nim', '=', $username)
-            ->update(array('moodle_id' => $hasil[0]->id, 'password_moodle' => $password));
+    DB::table('ref_mahasiswa')
+        ->where('nim', '=', $username)
+        ->update(array('moodle_id' => $hasil[0]->id, 'password_moodle' => $password));
 
     return $hasil;
+  }
+  /* end daftar mahasiswa moodle method */
+
+  public function assign_role_mahasiswa($userid, $roleid)
+  {
+    // fungsi untuk memasukkan role id di moodle
+    $functionname = 'core_role_assign_roles';
+    $restformat = 'json';
+
+    $serverurl = $this->domain."/webservice/rest/server.php?wstoken=".$this->token."&wsfunction=".$functionname."&moodlerestformat=".$restformat;
+
+    $data_array = array();
+    $data_array[0]['roleid'] = $roleid;
+    $data_array[0]['userid'] = $userid;
+
+    $params = array('users'=>$data_array);
+
+    //url-ify the data for the POST
+    $field_string = http_build_query($params);
+
+    // open connection
+    $ch = curl_init();
+
+    // set the url, number of POST vars, POST data
+    curl_setopt($ch, CURLOPT_URL, $serverurl);
+    curl_setopt($ch, CURLOPT_POST, 1);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $field_string);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+    // excute post
+    $result = curl_exec($ch);
+
+    // close connection
+    curl_close($ch);
   }
   /* end daftar mahasiswa moodle method */
 
@@ -227,6 +268,20 @@ class Mahasiswa extends Model
     curl_close($ch);
   }
   /* end update password method */
+
+  public function get_makul_mahasiswa($username, $id_periode)
+  {
+    $matkul_moodle = DB::table('matakuliah_mahasiswa')
+                        ->leftJoin('matakuliah', function($join) {
+                            $join->on('matakuliah_mahasiswa.id_jadwal', '=', 'matakuliah.id_jadwal');
+                        })
+                        ->where('matakuliah_mahasiswa.nim_mahasiswa', '=', $username)
+                        ->where('matakuliah_mahasiswa.id_periode', '=', $id_periode)
+                        ->get();
+
+    return $matkul_moodle;
+  }
+  /* end daftar matakuliah mahasiswa method */
 
 }
 

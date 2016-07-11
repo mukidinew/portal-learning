@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Dosen;
 use App\Http\Controllers\Controller;
 use App\Http\Requests;
 use App\Mahasiswa;
@@ -16,11 +17,35 @@ class PeriksaController extends Controller
 
     if(session()->has('moodle_id') && session()->get('status') == 'mahasiswa')
     {
-    	echo "halaman matakuliah mahasiswa";
+    	$username = session()->get('username');
+      $password = session()->get('password');
+
+      $email = session()->get('email');
+      $password_email = session()->get('password_email');
+      $moodle_id = session()->get('moodle_id');
+
+      $mahasiswa = new Mahasiswa;
+      $matkul_moodle = $mahasiswa->get_makul_mahasiswa($username, $periode_id);
+
+      return view('elearning-mahasiswa')->with('username', $username)
+                                        ->with('password', $password)
+                                        ->with('email', $email)
+                                        ->with('password_email', $password_email)
+                                        ->with('matkul_moodle',$matkul_moodle);
     }
     else if(session()->has('moodle_id') && session()->get('status') == 'dosen')
     {
-    	echo "halaman matakuliah dosen";
+    	$username = session()->get('username');
+      $password = session()->get('password');
+
+      $moodle_id = session()->get('moodle_id');
+
+      $dosen = new Dosen;
+      $matkul_moodle = $dosen->get_makul_dosen($username, $periode_id);
+
+      return view('elearning-dosen')->with('username', $username)
+                                    ->with('password', $password)
+                                    ->with('matkul_moodle', $matkul_moodle);
     }
     else
     {
@@ -113,7 +138,6 @@ class PeriksaController extends Controller
     // jika ada syarat tidak terpenuhi seperti service mati atau salah password
     else
     {
-      // print_r($cek);
       return redirect('/')->with('warning', $cek_user['pesan']);
     }
  	}
@@ -121,7 +145,61 @@ class PeriksaController extends Controller
 
   private function dosen($username, $password)
   {
+    $dosen = new Dosen;
+
+    $cek_user = $dosen->cek_dosen($username, $password);
     
+    // jika proses cek berhasil
+    if($cek_user['status'] == 'sukses')
+    {
+      session()->put('nama_dosen', $dosen->data['nama']);
+      session()->put('username', $username);
+      session()->put('password', $password);
+
+      $cek_email = $dosen->cek_email_dosen($username);
+
+      // jika terdaftar
+      if($cek_email['ada'] == 1)
+      {
+        $cek_moodle = $dosen->cek_moodle_dosen($username);
+
+        // jika belum ada di moodle, maka daftarkan di moodle
+        if($cek_moodle['ada'] == 0)
+        {
+          $daftar = $dosen->daftar_dosen($username, $password, $cek_email['email']);
+          if(isset($daftar[0]->id))
+          {
+            $dosen->assign_role_dosen($daftar[0]->id, 3);
+
+            session()->put('moodle_id', $daftar[0]->id);
+            session()->put('status', 'dosen');
+            return redirect('/');
+          }
+        }
+        else if($cek_moodle['ada'] == 1)
+        {
+          $dosen->update_dosen($cek_moodle['moodle_id'], $password, $cek_email['email']);
+
+          session()->put('moodle_id', $cek_moodle['moodle_id']);
+          session()->put('status', 'dosen');
+          return redirect('/');
+        }
+      }
+      // email masih kosong
+      else if($cek_email['ada'] == 0)
+      {
+        session()->put('email-dosen', 'belum-ada');
+        return redirect('validasi-email-dosen');
+      }
+      else
+      {
+        return redirect('/')->with('warning', 'Hubungi Operator E-learning di helpdesk-elearning@untan.ac.id untuk mendaftarkan Akun Anda');
+      }
+    }
+    else
+    {
+      return redirect('/')->with('warning', $cek_user['pesan']);
+    }
   }
 }
 

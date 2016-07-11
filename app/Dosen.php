@@ -1,4 +1,4 @@
-<?php
+<?php 
 
 namespace App;
 
@@ -7,151 +7,121 @@ use Illuminate\Support\Facades\DB;
 
 class Dosen extends Model
 {
-    public $data;
-    private $serviceLogin = 'http://login.untan.ac.id/portal/api/service/';
+	private $service = 'http://203.24.50.30:4444/Datasnap/Rest/Tservermethods1/logindosen';
+  private $token = 'e195e15add7e9370355f0416dfcc306d';
+  private $domain = 'http://e-learning.untan.ac.id/learning';
 
-    /* ============= E-learning ================= */
-    public $token = 'e195e15add7e9370355f0416dfcc306d';
-	public $domain = 'http://e-learning.untan.ac.id/learning';
+  private function ambil_service($username, $password)
+  {
+  	$ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $this->service.'/X'.$username.'/X'.$password);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    $result = curl_exec($ch);
 
-	// public $token = '4a69f57b2efc3edaa9eb7dfee032aafc';
-	// public $domain = 'http://e-learning.untan.dev/moodle';
+    if($result === false)
+    {
+    	// Jika service mati
+      return array('status'=>'gagal', 'pesan'=>'Service Siakad sedang Gangguan, Silahkan coba beberapa saat lagi');
+    }
+    else
+    {
+    	$json = json_decode($result, TRUE);
 
-	public $service = 'http://203.24.50.30:4444/Datasnap/Rest/Tservermethods1/logindosen';
+      // jika error too many connection
+      if(isset($json['error']))
+      {
+        return array('status'=>'gagal', 'pesan'=>'Service Siakad sedang Gangguan, Silahkan coba beberapa saat lagi');
+      }
+      // jika dosen aktif
+      else if($json['result'][0]['stat'] == 'aktif')
+      {
+      	return array('status' => 'sukses',
+                      'iddosen' => $json['result'][0]['iddosen'],
+                      'nama' => $json['result'][0]['nama'],
+                      'username' => $username,
+                      'password' => $password
+                     );
+      }
+      // jika salah password atau error lain
+      else
+      {
+      	return array('status'=>'gagal', 'pesan'=>'Cek lagi Password yang dimasukkan');
+      }
+    }
+  }
+  /* end cek_service method */
 
-	public function ambil_service($username, $password)
-	{
-		$ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $this->service.'/X'.$username.'/X'.$password);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        $result = curl_exec($ch);
-        if($result === false)
+  public function cek_dosen($username, $password)
+  {
+  	// Hitung Dosen apakah terdaftar di DB
+  	$hitung = DB::table('ref_dosen')->where('nip', '=', $username)->count();
+  	// jika belum terdaftar di DB
+  	if($hitung == 0)
+  	{
+  		$data = $this->ambil_service($username, $password);
+  		if($data['status'] == 'sukses')
+  		{
+  			DB::table('ref_dosen')
+  				->insert(array(
+  					'nip' 			=> $data['username'],
+  					'password'	=> $data['password'],
+  					'id_dosen'	=> $data['iddosen'],
+  					'nama' 			=> $data['nama']
+  				));
+  		}
+  		return $data;
+  	}
+  	// jika terdaftar di DB
+  	else
+  	{
+  		$user = DB::table('ref_dosen')->where('nip', '=', $username)->first();
+  		// jika password masih kosong
+  		if($user->password == '' || $user->nama == '')
+  		{
+  			$data = $this->ambil_service($username, $password);
+  			if($data['status'] == 'sukses')
         {
-            // Jika service mati
-            $this->data = array('stat' => 'error_service');
-        }
-        else
-        {
-            $json = json_decode($result, TRUE);
-            if(isset($json['error']))
-            {
-                $this->data = array('stat' => 'error_service');
-            }
-            else
-            {
-            	$this->data = $json['result'][0];
-            }
-        }
-	}
+	  			DB::table('ref_dosen')
+	  				->where('nip', '=', $username)
+	  				->update(array(
+	  					'password' 	=> $data['password'],
+	  					'nama' 			=> $data['nama'] 
+	  				));
+	  		}
+  			return $data;
+  		}
+  		// jika password tidak sama
+  		else if($user->password != $password)
+  		{
+  			$data = $this->ambil_service($username, $password);
+  			if($data['status'] == 'sukses')
+  			{
+  				DB::table('ref_dosen')
+  					->where('nip', '=', $username)
+  					->update(array(
+  						'password' => $password
+  					));
+  			}
+  			return $data;
+  		}
+  		else
+  		{
+  			return array('status' => 'sukses',
+  										'iddosen' => $user->id_dosen,
+  										'nama' => $user->nama,
+  										'username' => $user->nip,
+  										'password' => $user->password);
+  		}
+  	}
+  }
+  /* end cek_dosen method */
 
-	// Cek User yang pernah akses E-Learning
-	public function cek_dosen($username, $password)
-	{
-		// Hitung Dosen apakah terdaftar di DB
-		$hitung = DB::table('ref_dosen')->where('nip', '=', $username)->count();
-		// Jika belum terdaftar di DB
-		if($hitung == 0)
-		{
-			$this->ambil_service($username, $password);
-			// Jika pada service ditemukan
-			if($this->data['stat'] == 'aktif')
-			{
-				DB::table('ref_dosen')
-					->insert(array(
-						'nip'				=> $username,
-						'password'			=> $password,
-						'id_dosen'			=> $this->data['iddosen'],
-						'nama'				=> $this->data['nama']
-					));
-				return array('status'=>'sukses', 'pesan'=>'Berhasil insert data dosen');
-			}
-			// jika Service Mati
-			else if($this->data['stat'] == 'error_service')
-			{
-                return array('status'=>'gagal', 'pesan'=>'Service Siakad sedang Gangguan, Silahkan coba beberapa saat lagi');
-			}
-			// jika password salah
-			else
-			{
-                return array('status'=>'gagal', 'pesan'=>'Cek lagi Password yang dimasukkan');
-			}
-		}
-		// Jika terdaftar di DB
-		else
-		{
-			$user = DB::table('ref_dosen')->where('nip', '=', $username)->first();
-			// jika password dan nama masih kosong
-			if($user->password == '' || $user->nama == '')
-			{
-				$this->ambil_service($username, $password);
-				// Jika pada service ditemukan
-				if($this->data['stat'] == 'aktif')
-				{
-					// Update data Dosen
-					DB::table('ref_dosen')
-						->where('nip', '=', $username)
-						->update(array(
-							'password'			=> $password,
-							'nama'				=> $this->data['nama']
-						));
-					return array('status'=>'sukses', 'pesan'=>'Berhasil Update data Dosen');
-				}
-				// jika Service Mati
-				else if($this->data['stat'] == 'error_service')
-				{
-	                return array('status'=>'gagal', 'pesan'=>'Service Siakad sedang Gangguan, Silahkan coba beberapa saat lagi');
-				}
-				// jika password salah
-				else
-				{
-	                return array('status'=>'gagal', 'pesan'=>'Cek lagi Password yang dimasukkan');
-				}
-			}
-			// Jika sudah punya password
-			else
-			{
-				// Jika password benar
-				if($password == $user->password)
-				{
-					$this->data = array('username' => $user->nip,
-										'nama' => $user->nama);
-					return array('status' => 'sukses', 'pesan' => 'Lanjut ke proses selanjutnya');
-				}
-				// jika password di database tidak sama
-				else
-				{
-					$this->ambil_service($username, $password);
-					// Jika pada service ditemukan
-					if($this->data['stat'] == 'aktif')
-					{
-						// Update password Dosen
-						DB::table('ref_dosen')
-							->where('nip', '=', $username)
-							->update(array(
-								'password'	=> $password,
-							));
-						return array('status'=>'sukses', 'pesan'=>'Berhasil Update data Dosen');
-					}
-					// jika Service Mati
-					else if($this->data['stat'] == 'error_service')
-					{
-		                return array('status'=>'gagal', 'pesan'=>'Service Siakad sedang Gangguan, Silahkan coba beberapa saat lagi');
-					}
-					// jika password salah
-					else
-					{
-		                return array('status'=>'gagal', 'pesan'=>'Cek lagi Password yang dimasukkan');
-					}
-				}
-			}
-		}
-	}
+  public function cek_email_dosen($username)
+  {
+  	$hitung_user_email = DB::table('email_dosen')->where('nip', '=', $username)->count();
 
-    public function cek_email_dosen($username)
-	{
-		$hitung_user_email = DB::table('email_dosen')->where('nip', '=', $username)->count();
-
-		if($hitung_user_email == 0) 
+  	// jika tidak terdaftar di DB 
+  	if($hitung_user_email == 0) 
 		{
 			$status = array('ada'=>-1);
 			return $status;
@@ -160,36 +130,33 @@ class Dosen extends Model
 		{
 			$email = DB::table('email_dosen')->where('nip', '=', $username)->first();
 
-	        if($email->email == '')
-	        {
-	            $status = array('ada'=>0);
-	            return $status;
-	        }
-	        else
-	        {
-	            $email = DB::table('email_dosen')->where('nip', '=', $username)->first();
-	            $status = array('ada'=>1, 'email'=>$email->email);
-	            return $status;
-	        }
+			if($email->email == '')
+      {
+          $status = array('ada'=>0);
+          return $status;
+      }
+      else
+      {
+          $email = DB::table('email_dosen')->where('nip', '=', $username)->first();
+          $status = array('ada'=>1, 'email'=>$email->email);
+          return $status;
+      }
 		}
-		
-	}
+  }
 
-	public function cek_moodle_dosen($username)
+  public function cek_moodle_dosen($username)
 	{
-		$jml = DB::table('ref_dosen')->where('nip', '=', $username)->count();
-		echo $username;
-		die();
-		if($jml == 0)
+		$moodle = DB::table('ref_dosen')->where('nip', '=', $username)->first();
+
+		if($moodle->moodle_id == '')
 		{
-			$status = array('ada'=>0, 'moodle_id'=>0);
-			return $status;
+			$status = array('ada'=>0,'moodle_id'=>0);
+      return $status;
 		}
 		else
 		{
-			$moodle = DB::table('ref_dosen')->where('nip', '=', $username)->first();
-			$status = array('ada'=>1, 'moodle_id'=>$moodle->moodle_id);
-			return $status;
+			$status = array('ada'=>1,'moodle_id'=>$moodle->moodle_id, 'password'=>$moodle->password);
+      return $status;
 		}
 	}
 
@@ -243,39 +210,6 @@ class Dosen extends Model
 		return $hasil;
 	}
 
-	/* untuk update password login moodle */
-    public function update_dosen($userid, $password, $email)
-    {
-        $functionname = 'core_user_update_users';
-        $restformat = 'json';
-        $serverurl = $this->domain . '/webservice/rest/server.php'. '?wstoken=' . $this->token . '&wsfunction='.$functionname.'&moodlewsrestformat=' . $restformat;
-
-        $user = array();
-        $user[0]['id'] = $userid;
-        $user[0]['password'] = $password;
-        $user[0]['email'] = $email;
-
-        $params = array('users' => $user);
-
-        //url-ify the data for the POST
-        $field_string = http_build_query($params);
-
-        //open connection
-        $ch = curl_init();
-
-        //set the url, number of POST vars, POST data
-        curl_setopt($ch,CURLOPT_URL, $serverurl);
-        curl_setopt($ch,CURLOPT_POST, 1);
-        curl_setopt($ch,CURLOPT_POSTFIELDS, $field_string);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-
-        //execute post
-        $result = curl_exec($ch);
-
-        //close connection
-        curl_close($ch);
-    }
-
 	public function assign_role_dosen($userid, $roleid)
 	{
 		// fungsi untuk memasukkan role id di moodle
@@ -310,7 +244,39 @@ class Dosen extends Model
 		curl_close($ch);
 	}
 
-	public function get_makul_dosen($username, $id_periode) 
+	public function update_dosen($userid, $password, $email)
+  {
+    $functionname = 'core_user_update_users';
+    $restformat = 'json';
+    $serverurl = $this->domain . '/webservice/rest/server.php'. '?wstoken=' . $this->token . '&wsfunction='.$functionname.'&moodlewsrestformat=' . $restformat;
+
+    $user = array();
+    $user[0]['id'] = $userid;
+    $user[0]['password'] = $password;
+    $user[0]['email'] = $email;
+
+    $params = array('users' => $user);
+
+    //url-ify the data for the POST
+    $field_string = http_build_query($params);
+
+    //open connection
+    $ch = curl_init();
+
+    //set the url, number of POST vars, POST data
+    curl_setopt($ch,CURLOPT_URL, $serverurl);
+    curl_setopt($ch,CURLOPT_POST, 1);
+    curl_setopt($ch,CURLOPT_POSTFIELDS, $field_string);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+    //execute post
+    $result = curl_exec($ch);
+
+    //close connection
+    curl_close($ch);
+  }
+
+  public function get_makul_dosen($username, $id_periode) 
 	{
 		$matkul_moodle = DB::table('matakuliah_dosen')
 							->leftJoin('matakuliah', function($join) {
@@ -322,4 +288,7 @@ class Dosen extends Model
 
 		return $matkul_moodle;
 	}
+
 }
+
+?>

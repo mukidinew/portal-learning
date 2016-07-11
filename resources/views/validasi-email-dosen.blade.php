@@ -9,7 +9,8 @@
 				<form method="POST" class="form-login" id="form-email-dosen">
 					<div class="form-group">
 						<label for="">NIP</label>
-						<input type="text" name="username" value="{{ $username }}" class="form-control" disabled="">
+						<input type="text" value="{{ $username }}" class="form-control" disabled="">
+						<input type="hidden" name="username" value="{{ $username }}">
 						<input type="hidden" name="password" value="{{ $password }}">
 					</div>
 					<div class="form-group">
