@@ -14,6 +14,13 @@ class Kernel extends ConsoleKernel
      */
     protected $commands = [
         \App\Console\Commands\Inspire::class,
+        \App\Console\Commands\GetServicePeriode::class,
+        \App\Console\Commands\GetServiceFakultas::class,
+        \App\Console\Commands\GetServiceProdi::class,
+        \App\Console\Commands\GetServiceProgram::class,
+        \App\Console\Commands\GetServiceMatkul::class,
+        \App\Console\Commands\GetServiceMatkulDosen::class,
+        \App\Console\Commands\GetServiceMatkulMahasiswa::class,
     ];
 
     /**
@@ -24,7 +31,8 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->command('inspire')
-                 ->hourly();
+        // $schedule->command('inspire')
+        //          ->hourly();
+        // $schedule->command('getMatkul 338 40 1')->everyMinute();
     }
 }

@@ -13,3 +13,10 @@ Route::get('matakuliah/detail', 'MatakuliahController@detailMatakuliah');
 Route::get('matakuliah/enable', 'MatakuliahController@enableMatakuliah');
 Route::get('enrol/mahasiswa', 'MatakuliahController@enrolMahasiswa');
 Route::get('enrol/dosen', 'MatakuliahController@enrolDosen');
+
+Route::get('test-edit', function() {
+
+	$matkul = new \App\Matkul;
+	$matkul->editMatkulDosen();
+
+});
