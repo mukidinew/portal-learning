@@ -44,6 +44,7 @@ Route::get('create-matkul-tambahan-dosen', function() {
 
 	foreach($Dosen as $key => $dosen)
 	{
+		$key = $key + 1;
 		DB::table('matakuliah_dosen')->insert(array(
 
 			'id_periode' => 341,
