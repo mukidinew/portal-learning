@@ -44,7 +44,8 @@ Route::get('create-matkul-tambahan-dosen', function() {
 
 	foreach($Dosen as $key => $dosen)
 	{
-		DB::table('matakuliah_dosen')->insert(array() 
+		DB::table('matakuliah_dosen')->insert(array(
+
 			'id_periode' => 341,
 			'id_jadwal' => $key+1,
 			'nip' => $dosen->nip,
@@ -53,8 +54,7 @@ Route::get('create-matkul-tambahan-dosen', function() {
 			'matakuliah' => 'Latihan '.$key+1,
 			'prodi' => 'Prodi Tambahan',
 			'kelas' => 'A',
-			'program' => 'Pelatihan E-learning',
-		));
+			'program' => 'Pelatihan E-learning'));
 	}
 
 });
