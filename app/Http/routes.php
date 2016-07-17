@@ -48,11 +48,11 @@ Route::get('create-matkul-tambahan-dosen', function() {
 		DB::table('matakuliah_dosen')->insert(array(
 
 			'id_periode' => 341,
-			'id_jadwal' => $key+1,
+			'id_jadwal' => $key,
 			'nip' => $dosen->nip,
 			'nama' => $dosen->nama,
-			'kode_matakuliah' => 'TryMoodle-'.$key+1,
-			'matakuliah' => 'Latihan '.$key+1,
+			'kode_matakuliah' => 'TryMoodle-'.$key,
+			'matakuliah' => 'Latihan '.$key,
 			'prodi' => 'Prodi Tambahan',
 			'kelas' => 'A',
 			'program' => 'Pelatihan E-learning'));
