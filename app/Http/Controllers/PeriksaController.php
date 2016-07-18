@@ -68,6 +68,10 @@ class PeriksaController extends Controller
     {
         return $this->mahasiswa($username, $password);
     }
+    else
+    {
+      return $this->dosen($username, $password);
+    }
   } 
   /* end of verifikasi method */
 
