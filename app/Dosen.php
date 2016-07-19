@@ -162,14 +162,15 @@ class Dosen extends Model
 
 	public function daftar_dosen($username, $password, $email)
 	{
-		$data_profil = file_get_contents('http://203.24.50.30:4444/Datasnap/Rest/Tservermethods1/logindosen/X'.$username.'/X'.$password, false);
-		$data_profil = json_decode($data_profil);
+		// $data_profil = file_get_contents('http://203.24.50.30:4444/Datasnap/Rest/Tservermethods1/logindosen/X'.$username.'/X'.$password, false);
+		// $data_profil = json_decode($data_profil);
 
 		$functionname = 'core_user_create_users';
 		$restformat = 'json';
 		$serverurl = $this->domain . '/webservice/rest/server.php'. '?wstoken=' . $this->token . '&wsfunction='.$functionname.'&moodlewsrestformat=' . $restformat;
 
-		$nama_array = explode(' ', $data_profil->result[0]->nama);
+		// $nama_array = explode(' ', $data_profil->result[0]->nama);
+    $nama_array = explode(' ', session()->get('nama_dosen'));
 
 		$user = array();
 		$user[0]['username'] = strtolower($username);

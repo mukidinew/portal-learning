@@ -156,7 +156,7 @@ class PeriksaController extends Controller
     // jika proses cek berhasil
     if($cek_user['status'] == 'sukses')
     {
-      session()->put('nama_dosen', $dosen->data['nama']);
+      session()->put('nama_dosen', $cek_user['nama']);
       session()->put('username', $username);
       session()->put('password', $password);
 
