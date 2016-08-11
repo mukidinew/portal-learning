@@ -98,7 +98,8 @@ html,body {
 }
 .side-keterangan{
 	width: 200px;
-	margin: 50px auto;
+	margin: 0px auto;
+	margin-bottom: 20px;
 }
 .text-keterangan {
 	font-size: 18px;
