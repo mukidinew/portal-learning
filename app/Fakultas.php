@@ -19,7 +19,7 @@ class Fakultas extends Model
 
     	if($service === false)
     	{
-    		return "Service Periode Sedang Gangguan";
+    		return "Service Fakultas Sedang Gangguan";
     	}
     	else
     	{

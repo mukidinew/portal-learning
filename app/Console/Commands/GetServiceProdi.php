@@ -37,11 +37,10 @@ class GetServiceProdi extends Command
      */
     public function handle()
     {
-        $periode_id = \App\Periode::orderBy('id', 'DESC')->first()->id;
         $fakultas_id = $this->argument('fakultas_id');
 
-        $prodi = new \App\PeriodeProdi;
-        $result = $prodi->get_prodi($periode_id, $fakultas_id);
+        $prodi = new \App\Prodi;
+        $result = $prodi->get_prodi($fakultas_id);
 
         $this->info($result);
     }

@@ -37,11 +37,10 @@ class GetServiceProgram extends Command
      */
     public function handle()
     {
-        $periode_id = \App\Periode::orderBy('id', 'DESC')->first()->id;
         $fakultas_id = $this->argument('fakultas_id');
-
-        $program = new \App\PeriodeProgram;
-        $result = $program->get_program($periode_id, $fakultas_id);
+        
+        $program = new \App\Program;
+        $result = $program->get_program($fakultas_id);
 
         $this->info($result);
     }
