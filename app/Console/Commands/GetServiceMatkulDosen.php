@@ -37,11 +37,10 @@ class GetServiceMatkulDosen extends Command
      */
     public function handle()
     {
-        $periode_id = \App\Periode::orderBy('id', 'DESC')->first()->id;
         $fakultas_id = $this->argument('fakultas_id');
         
-        $matakuliah = new \App\MatkulDosen;
-        $result = $matakuliah->get_matkul($periode_id, $fakultas_id);
+        $matakuliah = new \App\Dosen;
+        $result = $matakuliah->get_matakuliah_dosen($fakultas_id);
 
         $this->info($result);
     }
