@@ -14,3 +14,16 @@ Route::get('matakuliah/detail', 'MatakuliahController@detailMatakuliah');
 Route::get('matakuliah/enable', 'MatakuliahController@enableMatakuliah');
 Route::get('enrol/mahasiswa', 'MatakuliahController@enrolMahasiswa');
 Route::get('enrol/dosen', 'MatakuliahController@enrolDosen');
+
+Route::group(['prefix' => 'learningpanel'], function() {
+
+	Route::get('/', 'PanelController@listPeriode');
+	Route::get('/fakultas', 'PanelController@listFakultas');
+	Route::get('/prodi', 'PanelController@listProdi');
+
+	Route::get('/import/periode/{id}', 'PanelController@importPeriode');
+	Route::get('/import/fakultas/{id}', 'PanelController@importFakultas');
+	Route::get('/import/prodi/{id}', 'PanelController@importProdi');
+	Route::get('/import/program/{id}', 'PanelController@importProgram');
+
+});
