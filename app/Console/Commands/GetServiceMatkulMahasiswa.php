@@ -37,11 +37,10 @@ class GetServiceMatkulMahasiswa extends Command
      */
     public function handle()
     {
-        $periode_id = \App\Periode::orderBy('id', 'DESC')->first()->id;
         $fakultas_id = $this->argument('fakultas_id');
         
-        $matakuliah = new \App\MatkulMahasiswa;
-        $result = $matakuliah->get_matkul($periode_id, $fakultas_id);
+        $matakuliah = new \App\Mahasiswa;
+        $result = $matakuliah->get_matakuliah_mahasiswa($fakultas_id);
 
         $this->info($result);
     }
