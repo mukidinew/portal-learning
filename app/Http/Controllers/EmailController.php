@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Dosen;
-use App\Mahasiswa;
 use App\Http\Controllers\Controller;
 use App\Http\Requests;
 use Illuminate\Http\Request;
@@ -49,8 +47,8 @@ class EmailController extends Controller
     }
     else
     {
-      $nim = session()->get('username');
-      $password_siakad = session()->get('password');
+      $nim = session()->get('nim');
+      $password_siakad = session()->get('password_siakad');
       $email = strtolower($request->email.'@student.untan.ac.id');
       $password = $request->password;
       $first_name = $request->first_name;
@@ -66,44 +64,15 @@ class EmailController extends Controller
 
         if($result_google->id)
         {
-          DB::table('email_mahasiswa')->where('email', '=', $email)->delete();
+          $mahasiswa = new \App\Mahasiswa;
 
-          DB::table('email_mahasiswa')->insert(
-                      array('nim' => $nim,
-                            'email' => $email,
-                            'password' => $password,
-                            'first_name' => $first_name,
-                            'last_name' => $last_name,
-                            'email_id' => $result_google->id,
-                            'customer_id' => $result_google->customerId));
+          $mahasiswa->where('nim', $nim)->update(array('email_mahasiswa' => $email));
 
-          session()->put('email', $email);
-          session()->put('password_email', $password);
+          $cek_moodle_mahasiswa = $mahasiswa->cek_moodle_mahasiswa($nim, $password_siakad);
 
-          // ========= Cek dan Daftar Moodle ===============
-          $mahasiswa = new Mahasiswa;
-          $cek_moodle = $mahasiswa->cek_moodle_mahasiswa($nim);
-
-          // jika belum terdaftar di moodle
-          if($cek_moodle['ada'] == 0)
+          if($cek_moodle_mahasiswa)
           {
-            $daftar = $mahasiswa->daftar_mahasiswa($nim, $password_siakad, $email);
-            // jika sudah terdaftar di moodle, maka akan punya id, untuk di enrol sebahai mahasiswa
-            if(isset($daftar[0]->id))
-            {
-              $mahasiswa->assign_role_mahasiswa($daftar[0]->id, 5);
-
-              session()->put('moodle_id', $daftar[0]->id);
-              session()->put('status', 'mahasiswa');
-              return redirect('/');
-            }
-          }
-          // jika sudah terdaftar di moodle
-          else if($cek_moodle['ada'] == 1)
-          {
-              session()->put('moodle_id', $cek_moodle['moodle_id']);
-              session()->put('status', 'mahasiswa');
-              return redirect('/');
+            echo "sudah lengkap semua lanjut ke login";
           }
         }
       }
