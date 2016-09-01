@@ -53,37 +53,37 @@ class Kernel extends ConsoleKernel
         $schedule->command('getService:program 10')->weekly()->fridays();
         $schedule->command('getService:program 360')->weekly()->fridays();
 
-        $schedule->command('getService:matkul 2')->weekly()->saturday();
-        $schedule->command('getService:matkul 3')->weekly()->saturday();
-        $schedule->command('getService:matkul 4')->weekly()->saturday();
-        $schedule->command('getService:matkul 5')->weekly()->saturday();
-        $schedule->command('getService:matkul 6')->weekly()->saturday();
-        $schedule->command('getService:matkul 7')->weekly()->saturday();
-        $schedule->command('getService:matkul 8')->weekly()->saturday();
-        $schedule->command('getService:matkul 9')->weekly()->saturday();
-        $schedule->command('getService:matkul 10')->weekly()->saturday();
-        $schedule->command('getService:matkul 360')->weekly()->saturday();
+        $schedule->command('getService:matkul 2')->weekly()->saturdays();
+        $schedule->command('getService:matkul 3')->weekly()->saturdays();
+        $schedule->command('getService:matkul 4')->weekly()->saturdays();
+        $schedule->command('getService:matkul 5')->weekly()->saturdays();
+        $schedule->command('getService:matkul 6')->weekly()->saturdays();
+        $schedule->command('getService:matkul 7')->weekly()->saturdays();
+        $schedule->command('getService:matkul 8')->weekly()->saturdays();
+        $schedule->command('getService:matkul 9')->weekly()->saturdays();
+        $schedule->command('getService:matkul 10')->weekly()->saturdays();
+        $schedule->command('getService:matkul 360')->weekly()->saturdays();
 
-        $schedule->command('getService:matkulDosen 2')->weekly()->saturday();
-        $schedule->command('getService:matkulDosen 3')->weekly()->saturday();
-        $schedule->command('getService:matkulDosen 4')->weekly()->saturday();
-        $schedule->command('getService:matkulDosen 5')->weekly()->saturday();
-        $schedule->command('getService:matkulDosen 6')->weekly()->saturday();
-        $schedule->command('getService:matkulDosen 7')->weekly()->saturday();
-        $schedule->command('getService:matkulDosen 8')->weekly()->saturday();
-        $schedule->command('getService:matkulDosen 9')->weekly()->saturday();
-        $schedule->command('getService:matkulDosen 10')->weekly()->saturday();
-        $schedule->command('getService:matkulDosen 360')->weekly()->saturday();
+        $schedule->command('getService:matkulDosen 2')->weekly()->saturdays();
+        $schedule->command('getService:matkulDosen 3')->weekly()->saturdays();
+        $schedule->command('getService:matkulDosen 4')->weekly()->saturdays();
+        $schedule->command('getService:matkulDosen 5')->weekly()->saturdays();
+        $schedule->command('getService:matkulDosen 6')->weekly()->saturdays();
+        $schedule->command('getService:matkulDosen 7')->weekly()->saturdays();
+        $schedule->command('getService:matkulDosen 8')->weekly()->saturdays();
+        $schedule->command('getService:matkulDosen 9')->weekly()->saturdays();
+        $schedule->command('getService:matkulDosen 10')->weekly()->saturdays();
+        $schedule->command('getService:matkulDosen 360')->weekly()->saturdays();
 
-        $schedule->command('getService:matkulMahasiswa 2')->weekly()->sunday();
-        $schedule->command('getService:matkulMahasiswa 3')->weekly()->sunday();
-        $schedule->command('getService:matkulMahasiswa 4')->weekly()->sunday();
-        $schedule->command('getService:matkulMahasiswa 5')->weekly()->sunday();
-        $schedule->command('getService:matkulMahasiswa 6')->weekly()->sunday();
-        $schedule->command('getService:matkulMahasiswa 7')->weekly()->sunday();
-        $schedule->command('getService:matkulMahasiswa 8')->weekly()->sunday();
-        $schedule->command('getService:matkulMahasiswa 9')->weekly()->sunday();
-        $schedule->command('getService:matkulMahasiswa 10')->weekly()->sunday();
-        $schedule->command('getService:matkulMahasiswa 360')->weekly()->sunday();
+        $schedule->command('getService:matkulMahasiswa 2')->weekly()->sundays();
+        $schedule->command('getService:matkulMahasiswa 3')->weekly()->sundays();
+        $schedule->command('getService:matkulMahasiswa 4')->weekly()->sundays();
+        $schedule->command('getService:matkulMahasiswa 5')->weekly()->sundays();
+        $schedule->command('getService:matkulMahasiswa 6')->weekly()->sundays();
+        $schedule->command('getService:matkulMahasiswa 7')->weekly()->sundays();
+        $schedule->command('getService:matkulMahasiswa 8')->weekly()->sundays();
+        $schedule->command('getService:matkulMahasiswa 9')->weekly()->sundays();
+        $schedule->command('getService:matkulMahasiswa 10')->weekly()->sundays();
+        $schedule->command('getService:matkulMahasiswa 360')->weekly()->sundays();
     }
 }
