@@ -31,8 +31,59 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')
-        //          ->hourly();
-        // $schedule->command('getMatkul 338 40 1')->everyMinute();
+        $schedule->command('getService:prodi 2')->weekly()->fridays();
+        $schedule->command('getService:prodi 3')->weekly()->fridays();
+        $schedule->command('getService:prodi 4')->weekly()->fridays();
+        $schedule->command('getService:prodi 5')->weekly()->fridays();
+        $schedule->command('getService:prodi 6')->weekly()->fridays();
+        $schedule->command('getService:prodi 7')->weekly()->fridays();
+        $schedule->command('getService:prodi 8')->weekly()->fridays();
+        $schedule->command('getService:prodi 9')->weekly()->fridays();
+        $schedule->command('getService:prodi 10')->weekly()->fridays();
+        $schedule->command('getService:prodi 360')->weekly()->fridays();
+
+        $schedule->command('getService:program 2')->weekly()->fridays();
+        $schedule->command('getService:program 3')->weekly()->fridays();
+        $schedule->command('getService:program 4')->weekly()->fridays();
+        $schedule->command('getService:program 5')->weekly()->fridays();
+        $schedule->command('getService:program 6')->weekly()->fridays();
+        $schedule->command('getService:program 7')->weekly()->fridays();
+        $schedule->command('getService:program 8')->weekly()->fridays();
+        $schedule->command('getService:program 9')->weekly()->fridays();
+        $schedule->command('getService:program 10')->weekly()->fridays();
+        $schedule->command('getService:program 360')->weekly()->fridays();
+
+        $schedule->command('getService:matkul 2')->weekly()->saturday();
+        $schedule->command('getService:matkul 3')->weekly()->saturday();
+        $schedule->command('getService:matkul 4')->weekly()->saturday();
+        $schedule->command('getService:matkul 5')->weekly()->saturday();
+        $schedule->command('getService:matkul 6')->weekly()->saturday();
+        $schedule->command('getService:matkul 7')->weekly()->saturday();
+        $schedule->command('getService:matkul 8')->weekly()->saturday();
+        $schedule->command('getService:matkul 9')->weekly()->saturday();
+        $schedule->command('getService:matkul 10')->weekly()->saturday();
+        $schedule->command('getService:matkul 360')->weekly()->saturday();
+
+        $schedule->command('getService:matkulDosen 2')->weekly()->saturday();
+        $schedule->command('getService:matkulDosen 3')->weekly()->saturday();
+        $schedule->command('getService:matkulDosen 4')->weekly()->saturday();
+        $schedule->command('getService:matkulDosen 5')->weekly()->saturday();
+        $schedule->command('getService:matkulDosen 6')->weekly()->saturday();
+        $schedule->command('getService:matkulDosen 7')->weekly()->saturday();
+        $schedule->command('getService:matkulDosen 8')->weekly()->saturday();
+        $schedule->command('getService:matkulDosen 9')->weekly()->saturday();
+        $schedule->command('getService:matkulDosen 10')->weekly()->saturday();
+        $schedule->command('getService:matkulDosen 360')->weekly()->saturday();
+
+        $schedule->command('getService:matkulMahasiswa 2')->weekly()->sunday();
+        $schedule->command('getService:matkulMahasiswa 3')->weekly()->sunday();
+        $schedule->command('getService:matkulMahasiswa 4')->weekly()->sunday();
+        $schedule->command('getService:matkulMahasiswa 5')->weekly()->sunday();
+        $schedule->command('getService:matkulMahasiswa 6')->weekly()->sunday();
+        $schedule->command('getService:matkulMahasiswa 7')->weekly()->sunday();
+        $schedule->command('getService:matkulMahasiswa 8')->weekly()->sunday();
+        $schedule->command('getService:matkulMahasiswa 9')->weekly()->sunday();
+        $schedule->command('getService:matkulMahasiswa 10')->weekly()->sunday();
+        $schedule->command('getService:matkulMahasiswa 360')->weekly()->sunday();
     }
 }
