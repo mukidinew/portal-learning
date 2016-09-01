@@ -173,7 +173,7 @@ class Elearning extends Model
 
 				foreach($Mahasiswa as $mahasiswa)
 				{
-					DB::table('matakuliah_mahasiswa')->where('id', $dosen->matakuliah_mahasiswa_id)
+					DB::table('matakuliah_mahasiswa')->where('id', $mahasiswa->matakuliah_mahasiswa_id)
 						->update(array('moodle_mahasiswa_enroll' => 1));
 				}
 				return true;

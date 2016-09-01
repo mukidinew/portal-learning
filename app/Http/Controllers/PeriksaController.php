@@ -16,10 +16,14 @@ class PeriksaController extends Controller
       $nim = session()->get('nim');
 
       $mahasiswa_matkul = $mahasiswa->get_matkul_mahasiswa($nim);
+      $mahasiswa_profil = $mahasiswa->get_profil_mahasiswa($nim);
 
-      print_r($mahasiswa_matkul);
+      // print_r($mahasiswa_matkul);
 
-      // return view('elearning-mahasiswa');
+      $data['mahasiswa_matkul'] = $mahasiswa_matkul;
+      $data['mahasiswa_profil'] = $mahasiswa_profil;
+
+      return view('elearning-mahasiswa', $data);
     }
     elseif(session()->get('status') == 'dosen')
     {

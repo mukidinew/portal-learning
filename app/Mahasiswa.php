@@ -59,6 +59,8 @@ class Mahasiswa extends Model
 									'kode_matakuliah' => $value->kodemk,
 									'nim' => $value->nim
 						));
+
+						echo $value->nim;
 					}
 				}
 			}
@@ -353,11 +355,27 @@ class Mahasiswa extends Model
 
 	  public function get_matkul_mahasiswa($nim)
 	  {
-	  	// $periode_id = \App\Periode::max('id');
-	  	$periode_id = 341;
-	  	$matkul = DB::table('matakuliah_mahasiswa')->where('periode_id', $periode_id)
-	  																						->where('nim', $nim)
-	  																						->get();
+	  	$periode_id = \App\Periode::max('id');
+	  	$matkul = DB::table('matakuliah_mahasiswa')
+	  					->leftJoin('matakuliah', 'matakuliah_mahasiswa.jadwal_id', '=', 'matakuliah.jadwal_id')
+							->leftJoin('prodi', function($join) {
+								$join->on('matakuliah.prodi_id', '=', 'prodi.prodi_id')
+										 ->on('matakuliah.periode_id', '=', 'prodi.periode_id');
+							})
+							->leftJoin('program', function($join) {
+								$join->on('matakuliah.program_id', '=', 'program.program_id')
+										 ->on('matakuliah.prodi_id', '=', 'program.prodi_id')
+										 ->on('matakuliah.periode_id', '=', 'program.periode_id');
+							})
+							->where('matakuliah.periode_id', $periode_id)
+							->where('nim', $nim)
+							->get();
 	  	return $matkul;
+	  }
+
+	  public function get_profil_mahasiswa($nim)
+	  {
+	  	$profil = DB::table('mahasiswa')->where('nim', $nim)->first();
+    	return $profil;
 	  }
 }

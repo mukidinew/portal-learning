@@ -34,10 +34,36 @@ class MatakuliahController extends Controller
 
       if(isset($enable_matakuliah[0]->id))
       {
-        $enroll_dosen = $elearning->enroll_dosen($jadwal_id, $periode_id, $enable_matakuliah[0]->id);
-        $enroll_mahasiswa = $elearning->enroll_mahasiswa($jadwal_id, $periode_id, $enable_matakuliah[0]->id);
+        $elearning->enroll_dosen($jadwal_id, $periode_id, $enable_matakuliah[0]->id);
+        $elearning->enroll_mahasiswa($jadwal_id, $periode_id, $enable_matakuliah[0]->id);
       }
 
       return back()->with('pesan', 'Matakuliah Sudah Aktif Di E-learning');
+    }
+
+    public function enrolMahasiswa(Request $request)
+    {
+      $jadwal_id = $request->jadwal_id;
+      $periode_id = $request->periode_id;
+      $course_id = $request->course_id;
+
+      $elearning = new \App\Elearning;
+
+      $elearning->enroll_mahasiswa($jadwal_id, $periode_id, $course_id);
+
+      return back()->with('pesan', 'Berhasil join dimatakuliah');
+    }
+
+    public function enrolDosen(Request $request)
+    {
+      $jadwal_id = $request->jadwal_id;
+      $periode_id = $request->periode_id;
+      $course_id = $request->course_id;
+
+      $elearning = new \App\Elearning;
+
+      $elearning->enroll_dosen($jadwal_id, $periode_id, $course_id);
+
+      return back()->with('pesan', 'Berhasil join dimatakuliah');
     }
 }

@@ -37,7 +37,7 @@
             <div class="collapse navbar-collapse">
                 <!-- Left Side Of Navbar -->
 
-                @if(session()->has('moodle_id'))
+                @if(session()->has('status'))
                 <ul class="nav navbar-nav navbar-right">
                     <li>
                         <a href="{{ url('logout') }}" class="link-logout">Logout</a>

@@ -3,23 +3,24 @@
 @section('content')
 
 <div class="container">
-	<h2 class="page-title">Selamat Datang {{ session()->get('nama_mhs') }}</h2>
-    <p style="margin-bottom: 0;"><b>Email:</b> {{ $email }}</p>
-    <p><b>Password:</b> {{ $password_email }}</p>
-    <p style="font-size: 16px; width: 80%;">Mohon untuk aktif menggunakan Email UNTAN, karena jika di biarkan <b>bekapok tak pernah di buka lebih dari 1 bulan</b> akan di non-aktifkan oleh ADMIN</p>
-
-    @if(session('pesan'))
+	<h2 class="page-title">Selamat Datang {{$mahasiswa_profil->nama_mahasiswa}}</h2>
+    
+	<div class="alert alert-warning">
+	 <p>Email Mahasiswa:<b> {{ $mahasiswa_profil->email_mahasiswa }}</b></p>
+	 Jika E-mail student anda <b>tidak aktif</b> atau <b>salah password</b>, maka silahkan kirim email pengaduan ke <b>helpdesk-elearning@untan.ac.id</b></div>
+  @if(session('pesan'))
 		<div class="alert alert-warning" style="padding: 10px; margin-top: 5px;">
-	        {{ session('pesan') }}
-	    </div>
+        {{ session('pesan') }}
+    </div>
 	@endif
 
-    <span class="liner"></span>
+  <span class="liner"></span>
 
 	<div class="row">
 		<div class="col-md-8">
 			<div class="row">
-				@foreach($matkul_moodle as $key => $value)
+				@if(count($mahasiswa_matkul) > 0)
+				@foreach($mahasiswa_matkul as $key => $value)
 				<div class="col-md-6">
 					<div class="box-matkul" style="height: 350px;">
 						<div class="title-matkul">
@@ -29,32 +30,37 @@
 							<p>Prodi : <b>{{ $value->prodi }}</b></p>
 							<p>Program : <b>{{ $value->program}}</b></p>
 							<p>Kode Matakuliah : <b>{{ $value->kode_matakuliah }}</b></p>
-							<p>Status Matakuliah : <b> 
-								@if($value->moodle_matakuliah_id == 0) 
+							<p>Status Matakuliah :
+								<b>@if($value->moodle_matakuliah_id == NULL) 
 									<span style="color: #e74c3c"> Belum Ada di Elearning </span> 
 								@else 
 									<span style="color: #3498db">Aktif di Elearning</span>
-								@endif</b></p>
-							<p>Status Mahasiswa : <b>
-								@if($value->sudah_enrol == 0)
+								@endif</b>
+							</p>
+							<p>
+								Status Mahasiswa :
+								<b>@if($value->moodle_mahasiswa_enroll == NULL)
 									<span style="color: #e74c3c"> Belum Terdaftar di Matakuliah</span> 
 								@else
 									<span style="color: #3498db"> Sudah Terdaftar di Matakuliah</span> 
+								@endif</b>
+							</p>
+							<p>
+								@if($value->moodle_matakuliah_id != NULL && $value->moodle_mahasiswa_enroll == NULL)
+									<a href="{{url('enrol/mahasiswa?jadwal_id='.$value->jadwal_id.'&periode_id='.$value->periode_id.'&course_id='.$value->moodle_matakuliah_id)}}" class="btn btn-success" style="margin-top: 15px;">Gabung di Matakuliah</a>
 								@endif
-							</b></p>
-							@if($value->moodle_matakuliah_id != 0)
-								<a href="{{ url('enrol/mahasiswa?id_jadwal='.$value->id_jadwal.'&id_periode='.$value->id_periode) }}" class="btn btn-success" style="margin-top: 15px;">Gabung di Matakuliah</a>
-							@endif
+							</p>
 						</div>
 					</div>
 				</div>
 				@endforeach
+				@endif
 			</div>
 		</div>
 		<div class="col-md-4">
 			<form action="http://e-learning.untan.ac.id/learning/login/index.php" method="POST">
-				<input type="hidden" name="username" value="{{ $username }}">
-				<input type="hidden" name="password" value="{{ $password }}">
+				<input type="hidden" name="username" value="">
+				<input type="hidden" name="password" value="">
 				<input type="submit" class="btn btn-primary" value="Menuju E-learning">
 			</form>
 
@@ -66,7 +72,6 @@
 					<li>Cek Status Mahasiswa apakah <b>Sudah Terdaftar</b> atau <b>Belum Terdaftar</b> pada Matakuliah. Jika belum, maka silahkan klik tombol <b>Gabung di Mata kuliah</b>.</li>
 					<li>Klik Tombol <b>Menuju E-Learning</b> untuk masuk pada sistem E-Learning UNTAN.</li>
 					<li>Pastikan Data <b>Email Student</b> Anda masih aktif dengan mengeceknya minimal 1 bulan sekali dan sesuai dengan data profil anda di sistem E-learning.</li>
-					<li>Jika E-mail student anda <b>tidak aktif</b> atau <b>salah password</b>, maka silahkan kirim email pengaduan ke <b>helpdesk-elearning@untan.ac.id</b></li>
 				</ol>
 			</div>
 
