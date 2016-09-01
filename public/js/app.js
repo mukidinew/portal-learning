@@ -25,34 +25,34 @@ $(document).ready(function() {
 	
 });
 
-function detail_matkul_dosen(id_jadwal, id_periode)
+function detail_matkul_dosen(jadwal_id, periode_id)
 {
 	$('.cover, .box-detail-matkul').show();
 	$('#alert-loading').append("Sedang Loading....");
 	$.ajax({
 		url: 'matakuliah/detail',
 		type: 'GET',
-		data: {id_jadwal: id_jadwal, id_periode: id_periode},
+		data: {jadwal_id: jadwal_id, periode_id: periode_id},
 		success: function(data) {
 			$('#alert-loading').empty();
 			$("#total-mahasiswa").append("Total: " + data.length+ " Mahasiswa");
 			console.log(data);
 			$.each(data, function(index, value) {
-				// var status = 'helo';
+				var status = '';
 
-				if(value.moodle_id == null || value.moodle_id == "")
+				if(value.moodle_mahasiswa_id == null)
 				{
-					var status = "Belum Terdaftar di Elearning";
+					status = "Belum Terdaftar di E-Learning";
 				}
-				else if(value.moodle_id != 0 && value.sudah_enrol == 0)
+				else if(value.moodle_mahasiswa_enroll == null)
 				{
-					var status = "Belum Enroll Matakuliah";
+					status = "Belum Enroll Matakuliah";
 				}
-				else if(value.moodle_id !=0 && value.sudah_enrol != 0)
+				else if(value.moodle_mahasiswa_id != null && value.moodle_mahasiswa_enroll != null)
 				{
-					var status = "Sudah Enroll Matakuliah";
+					status = "Sudah Enroll Matakuliah";
 				}
-				$('.list-matkul-mahasiswa').append("<li>"+value.nama_mahasiswa+" ("+value.nim_mahasiswa+")<span>"+status+"</span></li>");
+				$('.list-matkul-mahasiswa').append("<li>"+value.nama_mahasiswa+" ("+value.nim+")<span>"+status+"</span></li>");
 			});
 		}
 	});

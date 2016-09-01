@@ -9,9 +9,9 @@
 				<form method="POST" class="form-login" id="form-email-dosen">
 					<div class="form-group">
 						<label for="">NIP</label>
-						<input type="text" value="{{ $username }}" class="form-control" disabled="">
-						<input type="hidden" name="username" value="{{ $username }}">
-						<input type="hidden" name="password" value="{{ $password }}">
+						<input type="text" value="{{ Session::get('nip') }}" class="form-control" disabled="">
+						<input type="hidden" name="username" value="{{ Session::get('nip') }}">
+						<input type="hidden" name="password" value="{{ Session::get('password_siakad') }}">
 					</div>
 					<div class="form-group">
 						<label for="">Email</label>

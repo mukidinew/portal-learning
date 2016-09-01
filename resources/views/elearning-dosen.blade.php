@@ -3,8 +3,10 @@
 @section('content')
 
 <div class="container">
-	<h2 class="page-title">Selamat Datang {{session()->get('nama_dosen')}}</h2>
-
+	<h2 class="page-title">Selamat Datang {{$dosen_profil->gelar_depan.' '.$dosen_profil->nama_dosen.' '.$dosen_profil->gelar_belakang}}</h2>
+	 <div class="alert alert-warning">
+	 <p>Email Dosen:<b> {{ $dosen_profil->email_dosen }}</b></p>
+	 Jika mempunyai masalah dalam menggunakan sistem E-Learning UNTAN, maka silahkan kirim email pengaduan ke <b>helpdesk-elearning@untan.ac.id</b></div>
 	@if(session('pesan'))
 		<div class="alert alert-success" style="padding: 10px; margin-top: 5px;">
 	        {{ session('pesan') }}
@@ -16,7 +18,7 @@
 	<div class="row">
 		<div class="col-md-8">
 			<div class="row">
-				@foreach($matkul_moodle as $key => $value)
+				@foreach($dosen_matkul as $key => $value)
 				<div class="col-md-6">
 					<div class="box-matkul">
 						<div class="title-matkul">
@@ -26,21 +28,25 @@
 							<p>Prodi : <b>{{ $value->prodi }}</b></p>
 							<p>Program : <b>{{ $value->program}}</b></p>
 							<p>Kode Matakuliah : <b>{{ $value->kode_matakuliah }}</b></p>
-							<p>Status Matakuliah : <b>@if($value->moodle_matakuliah_id == 0) <span style="color: #e74c3c">Belum Ada di Elearning</span> @else <span style="color: #3498db">Aktif di Elearning</span> @endif</b></p>
-							<p style="margin-bottom: 10px;">Status Dosen: <b>@if($value->sudah_enrol == 0) <span style="color: #e74c3c">Belum Enroll</span> @else <span style="color: #3498db">Aktif di Elearning</span> @endif</b></p>
-
+							<p>Status Matakuliah :
+								<b>@if($value->moodle_matakuliah_id == NULL) <span style="color: #e74c3c">Belum Ada di Elearning</span> @else <span style="color: #3498db">Aktif di Elearning</span> @endif</b>
+							</p>
+							<p>Status Dosen :
+								 <b>@if($value->moodle_dosen_enroll == NULL) <span style="color: #e74c3c">Belum Enroll</span> @else <span style="color: #3498db">Aktif di Elearning</span> @endif</b>
+							</p>
+							
 							<!-- Button Aktif Matakuliah -->
-							@if($value->moodle_matakuliah_id == 0)
-								<a href="{{ url('matakuliah/enable?kode_matakuliah='.$value->kode_matakuliah.'&id_prodi='.$value->id_prodi.'&program='.$value->program.'&kelas='.$value->kelas.'&id_periode='.$value->id_periode.'&id_jadwal='.$value->id_jadwal) }}" class="btn btn-warning">Aktikan</a>
+							@if($value->moodle_matakuliah_id == NULL)
+							<a href="{{url('matakuliah/enable?jadwal_id='.$value->jadwal_id.'&periode_id='.$value->periode_id)}}" class="btn btn-warning" style="margin-top: 10px;">Aktifkan</a>
 							@endif
 
 							<!-- Button Detail -->
-							<button class="btn btn-primary" onclick='detail_matkul_dosen("{{ $value->id_jadwal }}","{{ $value->id_periode }}")'>Detail</button>
+							<button class="btn btn-primary" style="margin-top: 10px;" onclick='detail_matkul_dosen("{{$value->jadwal_id }}","{{ $value->periode_id}}")'>Detail</button>
 
-							@if($value->sudah_enrol == 0 && $value->moodle_matakuliah_id != 0)
-								<a href="{{ url('enrol/dosen?id_jadwal='.$value->id_jadwal.'&id_periode='.$value->id_periode) }}" class="btn btn-success">Gabung di Matakuliah</a>
+							<!-- Button Join Matakuliah -->
+							@if($value->moodle_dosen_enroll == NULL && $value->moodle_matakuliah_id != NULL)
+							<a href="{{url('enrol/dosen?jadwal_id='.$value->jadwal_id.'&periode_id='.$value->periode_id.'&course_id='.$value->moodle_matakuliah_id)}}" class="btn btn-success" style="margin-top: 10px;">Gabung di Matakuliah</a>
 							@endif
-							
 						</div>
 					</div>
 				</div>
@@ -49,8 +55,8 @@
 		</div>
 		<div class="col-md-4">
 			<form action="http://e-learning.untan.ac.id/learning/login/index.php" method="POST">
-				<input type="hidden" name="username" value="{{ $username }}">
-				<input type="hidden" name="password" value="{{ $password }}">
+				<input type="hidden" name="username" value="{{Session::get('nip')}}">
+				<input type="hidden" name="password" value="{{Session::get('password_siakad')}}">
 				<input type="submit" class="btn btn-primary" value="Menuju E-learning">
 			</form>
 			<div class="box-sidebarProcedure">
@@ -60,7 +66,6 @@
 					<li>Dosen Menentukan Matakuliah apa saja yang ingin di aktifkan di Sistem E-Learning UNTAN dengan klik tombol <b>Aktifkan</b>. Secara otomatis dosen dan mahasiswa akan terdaftar pada matakuliah yang di aktifkan.</li>
 					<li>Data Mahasiswa yang mengambil matakuliah dapat dilihat pada tombol <b>detail</b> untuk dibandingkan dengan data siakad</li>
 					<li>Klik Tombol <b>Menuju E-Learning</b> untuk masuk pada sistem E-Learning UNTAN.</li>
-					<li>Jika mempunyai masalah dalam menggunakan sistem E-Learning UNTAN, maka silahkan kirim email pengaduan ke <b>helpdesk-elearning@untan.ac.id</b></li>
 				</ol>
 			</div>
 			<h3 class="page-title" style="font-size:25px;">Link Terkait</h3>
