@@ -100,7 +100,7 @@ class Mahasiswa extends Model
     				$data = json_decode($service, TRUE);
     				if(isset($data['error']))
 						{
-							return redirect('/')->with('warning', 'Service Siakad sedang mengalami gangguan');
+							false;
 						}
 						else if($data['result'][0]['idmhs'] > 0)
 						{
@@ -349,5 +349,15 @@ class Mahasiswa extends Model
 
 	    //close connection
 	    curl_close($ch);
+	  }
+
+	  public function get_matkul_mahasiswa($nim)
+	  {
+	  	// $periode_id = \App\Periode::max('id');
+	  	$periode_id = 341;
+	  	$matkul = DB::table('matakuliah_mahasiswa')->where('periode_id', $periode_id)
+	  																						->where('nim', $nim)
+	  																						->get();
+	  	return $matkul;
 	  }
 }

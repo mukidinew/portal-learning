@@ -10,7 +10,37 @@ class PeriksaController extends Controller
 {
   public function index()
   {
-    return view('login');
+    if(session()->get('status') == 'mahasiswa')
+    {
+      $mahasiswa = new \App\Mahasiswa;
+      $nim = session()->get('nim');
+
+      $mahasiswa_matkul = $mahasiswa->get_matkul_mahasiswa($nim);
+
+      print_r($mahasiswa_matkul);
+
+      // return view('elearning-mahasiswa');
+    }
+    elseif(session()->get('status') == 'dosen')
+    {
+      $dosen = new \App\Dosen;
+      $nip = session()->get('nip');
+
+      $dosen_matkul = $dosen->get_matkul_dosen($nip);
+      $dosen_profil = $dosen->get_profil_dosen($nip);
+
+      // print_r($dosen_matkul);
+
+      $data['dosen_profil'] = $dosen_profil;
+      $data['dosen_matkul'] = $dosen_matkul;
+
+      return view('elearning-dosen', $data);
+    }
+    else
+    {
+      return view('login');
+    }
+    
   }
 
   public function verifikasi(Request $request)
@@ -33,6 +63,12 @@ class PeriksaController extends Controller
     }
   }
 
+  public function logout()
+  {
+      session()->flush();
+      return redirect('/');
+  }
+
   /* =================================================================== 
     Private Method 
   =================================================================== */
@@ -45,6 +81,7 @@ class PeriksaController extends Controller
 
     if($cek_mahasiswa)
     {
+      session()->put('status', 'mahasiswa');
       session()->put('nim', $username);
       session()->put('password_siakad', $password);
 
@@ -63,7 +100,7 @@ class PeriksaController extends Controller
 
         if($cek_moodle_mahasiswa)
         {
-          echo "sudah lengkap semua lanjut ke login";
+          return redirect('/');
         }
       }
     }
@@ -71,6 +108,43 @@ class PeriksaController extends Controller
     {
       return redirect('/')->with('warning', 'Terjadi kesalahan sistem, cek lagi Username dan Password anda atau Service Siakad sedang mengalami gangguan');
     } 
+  }
+
+  private function verifikasi_dosen($username, $password)
+  {
+    $dosen = new \App\Dosen;
+
+    $cek_dosen = $dosen->cek_dosen($username, $password);
+
+    if($cek_dosen)
+    {
+      session()->put('status', 'dosen');
+      session()->put('nip', $username);
+      session()->put('password_siakad', $password);
+
+      $cek_email_dosen = $dosen->cek_email_dosen($username, $password);
+
+      // jika belum punya email
+      if(!$cek_email_dosen)
+      {
+        session()->put('email-dosen', 'belum-ada');
+        return redirect('validasi-email-dosen');
+      }
+      // jika sudah punya email
+      else
+      {
+        $cek_moodle_dosen = $dosen->cek_moodle_dosen($username, $password);
+
+        if($cek_moodle_dosen)
+        {
+          return redirect('/');
+        }
+      }
+    }
+    else
+    {
+      return redirect('/')->with('warning', 'Terjadi kesalahan sistem, cek lagi Username dan Password anda atau Service Siakad sedang mengalami gangguan');
+    }
   }
 }
 

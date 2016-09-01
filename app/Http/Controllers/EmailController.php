@@ -72,7 +72,7 @@ class EmailController extends Controller
 
           if($cek_moodle_mahasiswa)
           {
-            echo "sudah lengkap semua lanjut ke login";
+            return redirect('/');
           }
         }
       }
@@ -223,31 +223,17 @@ class EmailController extends Controller
   public function prosesValidasiEmailDosen(Request $request)
   {
     $email = strtolower($request->emaildosen);
-    $username = $request->username;
+    $nip = $request->username;
     $password = $request->password;
 
-    DB::table('email_dosen')->where('nip', '=', $username)->update(array('email'=>$email));
+    $dosen = new \App\Dosen;
 
-    $dosen = new Dosen;
-    $cek_moodle = $dosen->cek_moodle_dosen($username);
+    $dosen->where('nip', $nip)->update(array('email_dosen' => $email));
 
-    if($cek_moodle['ada'] == 0)
+    $cek_moodle_dosen = $dosen->cek_moodle_dosen($nip, $password);
+
+    if($cek_moodle_dosen)
     {
-      $daftar = $dosen->daftar_dosen($username, $password, $email);
-      if(isset($daftar[0]->id))
-      {
-        $dosen->assign_role_dosen($daftar[0]->id, 3);
-
-        session()->put('moodle_id', $daftar[0]->id);
-        session()->put('status', 'dosen');
-        return redirect('/');
-      }
-    }
-    elseif($cek_moodle['ada'] == 1)
-    {
-      session()->put('moodle_id', $cek_moodle['moodle_id']);
-      session()->put('status', 'dosen');
-
       return redirect('/');
     }
   }

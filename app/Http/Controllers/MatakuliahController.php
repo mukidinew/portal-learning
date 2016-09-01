@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\ElearningMatakuliah;
 use App\Http\Controllers\Controller;
 use App\Http\Requests;
 use Illuminate\Http\Request;
@@ -12,61 +11,33 @@ class MatakuliahController extends Controller
 {
     public function detailMatakuliah(Request $request)
     {
-      $id_jadwal = $request->id_jadwal;
-      $id_periode = $request->id_periode;
+      $jadwal_id = $request->jadwal_id;
+      $periode_id = $request->periode_id;
 
-      $matkul_mahasiswa = DB::table('matakuliah_mahasiswa')
-                              ->leftJoin('ref_mahasiswa', function($join) {
-                                  $join->on('matakuliah_mahasiswa.nim_mahasiswa', '=', 'ref_mahasiswa.nim');
-                              })
-                              ->where('matakuliah_mahasiswa.id_jadwal', '=', $id_jadwal)
-                              ->where('matakuliah_mahasiswa.id_periode', '=', $id_periode)
-                              ->get();
+      $matakuliah_mahasiswa = DB::table('matakuliah_mahasiswa')
+                                ->leftJoin('mahasiswa', 'matakuliah_mahasiswa.nim', '=', 'mahasiswa.nim')
+                                ->where('jadwal_id', $jadwal_id)
+                                ->where('periode_id', $periode_id)
+                                ->get();
 
-      return $matkul_mahasiswa;
-   }
+      return $matakuliah_mahasiswa;
+    }
 
-   public function enableMatakuliah(Request $request)
-   {
-      $kode_matakuliah = $request->kode_matakuliah;
-      $id_prodi = $request->id_prodi;
-      $program = $request->program;
-      $kelas = $request->kelas;
-      $id_periode = $request->id_periode;
-      $id_jadwal = $request->id_jadwal;
+    public function enableMatakuliah(Request $request)
+    {
+      $jadwal_id = $request->jadwal_id;
+      $periode_id = $request->periode_id;
 
-      $learning = new ElearningMatakuliah;
-      $enable_matkul = $learning->import_matkul($kode_matakuliah, $id_prodi, $program, $kelas, $id_periode);
+      $elearning = new \App\Elearning;
 
-      if(isset($enable_matkul[0]->id))
+      $enable_matakuliah = $elearning->import_matakuliah($jadwal_id, $periode_id);
+
+      if(isset($enable_matakuliah[0]->id))
       {
-        $learning->enrol_mahasiswa($id_jadwal, $id_periode);
-        $learning->enrol_dosen($id_jadwal, $id_periode);
+        $enroll_dosen = $elearning->enroll_dosen($jadwal_id, $periode_id, $enable_matakuliah[0]->id);
+        $enroll_mahasiswa = $elearning->enroll_mahasiswa($jadwal_id, $periode_id, $enable_matakuliah[0]->id);
       }
 
       return back()->with('pesan', 'Matakuliah Sudah Aktif Di E-learning');
-   }
-
-   public function enrolMahasiswa(Request $request)
-    {
-        $id_jadwal = $request->id_jadwal;
-        $id_periode = $request->id_periode;
-
-        $learning = new ElearningMatakuliah;
-        $learning->enrol_mahasiswa($id_jadwal, $id_periode);
-
-        return back()->with('pesan', 'Terima Kasih, Anda Sudah Join di Matakuliah');
-    }
-
-    public function enrolDosen(Request $request)
-    {
-        $id_jadwal = $request->id_jadwal;
-        $id_periode = $request->id_periode;
-
-
-        $learning = new ElearningMatakuliah;
-        $learning->enrol_dosen($id_jadwal, $id_periode);
-
-        return back()->with('pesan', 'Bapak/Ibu Sudah Join di Matakuliah');
     }
 }
