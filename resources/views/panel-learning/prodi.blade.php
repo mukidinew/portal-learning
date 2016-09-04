@@ -30,13 +30,13 @@
 					@foreach($prodi as $key => $value)
 					<li>{{$value->prodi}} / Moodle ID: {{$value->moodle_prodi_id}}
 					@if($value->moodle_prodi_id == NULL)
-					<a href="{{url('learningpanel/import/prodi/'.$value->id)}}" class="btn btn-xs btn-primary pull-right">Import ke Moodle</a>
+					<a href="{{url('panel-learning/import/prodi/'.$value->id)}}" class="btn btn-xs btn-primary pull-right">Import ke Moodle</a>
 					@endif
 					<ul class="list-panel" style="margin-top: 10px;">
 						@foreach($value->Program as $program)
 						<li>{{$program->program}} / Moodle ID: {{$program->moodle_program_id}}
 						@if($program->moodle_program_id == NULL && $value->moodle_prodi_id != NULL)
-						<a href="{{url('learningpanel/import/program/'.$program->id)}}" class="btn btn-xs btn-primary pull-right">Import ke Moodle</a>
+						<a href="{{url('panel-learning/import/program/'.$program->id)}}" class="btn btn-xs btn-primary pull-right">Import ke Moodle</a>
 						@endif
 						</li>
 						@endforeach

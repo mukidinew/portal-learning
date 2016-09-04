@@ -19,7 +19,7 @@ class PanelController extends Controller
 
         $data['periode'] = $periode;
 
-        return view('learning-panel.periode', $data);
+        return view('panel-learning.periode', $data);
     }
 
     public function importPeriode($id)
@@ -77,7 +77,7 @@ class PanelController extends Controller
         $data['periode'] = $periode;
         $data['periode_id'] = $periode_id;
 
-        return view('learning-panel.fakultas', $data);
+        return view('panel-learning.fakultas', $data);
     }
 
     public function importFakultas($id)
@@ -154,7 +154,7 @@ class PanelController extends Controller
         $data['fakultas_id'] = $fakultas_id;
         $data['periode_id'] = $periode_id;
 
-        return view('learning-panel.prodi', $data);
+        return view('panel-learning.prodi', $data);
     }
 
     public function importProdi($id)

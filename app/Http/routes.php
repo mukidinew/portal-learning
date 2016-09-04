@@ -15,7 +15,7 @@ Route::get('matakuliah/enable', 'MatakuliahController@enableMatakuliah');
 Route::get('enrol/mahasiswa', 'MatakuliahController@enrolMahasiswa');
 Route::get('enrol/dosen', 'MatakuliahController@enrolDosen');
 
-Route::group(['prefix' => 'learningpanel'], function() {
+Route::group(['prefix' => 'panel-learning'], function() {
 
 	Route::get('/', 'PanelController@listPeriode');
 	Route::get('/fakultas', 'PanelController@listFakultas');

@@ -22,9 +22,9 @@
 					@foreach($fakultas as $key => $value)
 					<li>{{$value->fakultas}} / Moodle ID : {{$value->moodle_fakultas_id}}
 					@if($value->moodle_fakultas_id == NULL)
-					<a href="{{url('learningpanel/import/fakultas/'.$value->id)}}" class="btn btn-xs btn-primary pull-right">Import ke Moodle</a>
+					<a href="{{url('panel-learning/import/fakultas/'.$value->id)}}" class="btn btn-xs btn-primary pull-right">Import ke Moodle</a>
 					@endif
-					<a href="{{url('learningpanel/prodi?periode_id='.$periode_id.'&fakultas_id='.$value->fakultas_id)}}" class="btn btn-xs btn-warning pull-right">Lihat Prodi</a>
+					<a href="{{url('panel-learning/prodi?periode_id='.$periode_id.'&fakultas_id='.$value->fakultas_id)}}" class="btn btn-xs btn-warning pull-right">Lihat Prodi</a>
 					</li>
 					@endforeach
 				</ul>
