@@ -80,7 +80,7 @@ class Mahasiswa extends Model
 
     public function cek_mahasiswa($username, $password)
     {
-    	$service = 'http://203.24.50.30:7475/Datasnap/Rest/Tservermethods1/loginmhs/'.$username.'/x'.$password;
+    	$service = 'http://192.168.32.14:7475/Datasnap/Rest/Tservermethods1/loginmhs/'.$username.'/x'.$password;
 
     	$hitung_mahasiswa = $this->where('nim', $username)->count();
 
