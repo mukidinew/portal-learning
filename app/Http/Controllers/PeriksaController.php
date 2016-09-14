@@ -94,8 +94,9 @@ class PeriksaController extends Controller
       // jika belum punya email
       if(!$cek_email_mahasiswa)
       {
-        session()->put('email', 'belum-ada');
-        return redirect('registrasi-email');
+        // session()->put('email', 'belum-ada');
+        // return redirect('registrasi-email');
+        return redirect('http://tik.untan.ac.id/registrasi-email/?nim='.$username);
       }
       // jika sudah punya email
       else

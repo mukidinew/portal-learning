@@ -27,3 +27,5 @@ Route::group(['prefix' => 'panel-learning'], function() {
 	Route::get('/import/program/{id}', 'PanelController@importProgram');
 
 });
+
+Route::get('api/update-email-mahasiswa', 'ApiController@updateEmailMahasiswa');
