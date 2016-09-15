@@ -10,7 +10,7 @@ class PeriksaController extends Controller
 {
   public function index()
   {
-    if(session()->get('status') == 'mahasiswa')
+    if(session()->get('status') == 'mahasiswa' && session()->has('moodle'))
     {
       $mahasiswa = new \App\Mahasiswa;
       $nim = session()->get('nim');
@@ -103,6 +103,7 @@ class PeriksaController extends Controller
       {
         $cek_moodle_mahasiswa = $mahasiswa->cek_moodle_mahasiswa($username, $password);
 
+        session()->put('moodle', 'ada');
         if($cek_moodle_mahasiswa)
         {
           return redirect('/');
