@@ -28,4 +28,4 @@ Route::group(['prefix' => 'panel-learning'], function() {
 
 });
 
-Route::get('api/update-email-mahasiswa', 'ApiController@updateEmailMahasiswa');
+Route::post('api/update-email-mahasiswa', 'ApiController@updateEmailMahasiswa');
