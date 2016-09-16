@@ -78,7 +78,7 @@ class Dosen extends Model
 
     public function cek_dosen($username, $password)
     {
-    	$service = 'http://192.168.32.14:7475/Datasnap/Rest/Tservermethods1/logindosen/X'.$username.'/X'.$password;
+    	$service = 'http://203.24.50.30:7475/Datasnap/Rest/Tservermethods1/logindosen/X'.$username.'/X'.$password;
 
     	$hitung_dosen = $this->where('nip', $username)->count();
 
