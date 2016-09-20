@@ -201,33 +201,36 @@ class EmailController extends Controller
    */
   public function resetPasswordEmail($email)
   {
-    $token = $this->getTokenGoogle();
+    if(session()->get('status') == 'mahasiswa')
+    {
+      $token = $this->getTokenGoogle();
 
-    $url = 'https://www.googleapis.com/admin/directory/v1/users/'.$email;
+      $url = 'https://www.googleapis.com/admin/directory/v1/users/'.$email;
 
-    $jsondata = '{
-        "password":"passwordsementara",
-        "primaryEmail":"'.$email.'",
-        "changePasswordAtNextLogin": true
-    }';
+      $jsondata = '{
+          "password":"passwordsementara",
+          "primaryEmail":"'.$email.'",
+          "changePasswordAtNextLogin": true
+      }';
 
-    // Initialize cURL session
-    $ch = curl_init($url);
-    curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-        'Content-Type: application/json',
-        'Authorization: Bearer '.$token
-    ));
+      // Initialize cURL session
+      $ch = curl_init($url);
+      curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+          'Content-Type: application/json',
+          'Authorization: Bearer '.$token
+      ));
 
-    curl_setopt($ch, CURLOPT_POSTFIELDS, $jsondata);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_FAILONERROR, false);
-    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT');
-    $result = curl_exec($ch);
+      curl_setopt($ch, CURLOPT_POSTFIELDS, $jsondata);
+      curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+      curl_setopt($ch, CURLOPT_FAILONERROR, false);
+      curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+      curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT');
+      $result = curl_exec($ch);
 
-    curl_close($ch);
+      curl_close($ch);
 
-    return back()->with('pesan', "Password berhasil di reset. Silahkan login gmail dengan kata sandi:  passwordsementara");
+      return back()->with('pesan', "Password berhasil di reset. Silahkan login gmail dengan kata sandi:  passwordsementara");
+    }
   }
 
   public function validasiEmailDosen()
