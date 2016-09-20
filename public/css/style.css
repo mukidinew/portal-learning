@@ -277,6 +277,10 @@ html,body {
 	/*padding-bottom: 20px;*/
 }
 
+.list-pesan li{
+	margin-bottom: 5px;
+}
+
 @media only screen and (max-width: 780px)
 {
 

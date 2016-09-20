@@ -7,6 +7,7 @@ Route::post('verifikasi', 'PeriksaController@verifikasi');
 
 Route::get('registrasi-email', 'EmailController@createEmail');
 Route::post('registrasi-email','EmailController@insertEmail');
+Route::get('reset-password-email/{email}', 'EmailController@resetPasswordEmail');
 Route::get('validasi-email-dosen', 'EmailController@validasiEmailDosen');
 Route::post('validasi-email-dosen', 'EmailController@prosesValidasiEmailDosen');
 

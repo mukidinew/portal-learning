@@ -60,7 +60,7 @@ class EmailController extends Controller
       if(empty($cek_email_to_google->users))
       {
         // =========== Buat Email di google ==============
-        $result_google = $this->insert_to_google($email,$password,$first_name,$last_name);
+        $result_google = $this->insertToGoogle($email,$password,$first_name,$last_name);
 
         if($result_google->id)
         {
@@ -85,7 +85,12 @@ class EmailController extends Controller
     }
   }
 
-  public function cekEmailGoogle($email)
+  
+
+  /**
+   * Mendapatkan Token Google
+   */
+  private function getTokenGoogle()
   {
     error_reporting(E_ALL);
     ini_set('display_errors', 1);
@@ -120,6 +125,16 @@ class EmailController extends Controller
     curl_close($ch);
     $token =  $token_result->access_token;
 
+    return $token;
+  }
+
+  /**
+   * Cek Email apakah sudah terdaftar di google
+   */
+  public function cekEmailGoogle($email)
+  {
+    $token = $this->getTokenGoogle();
+
     // periksa email di server google
     $url = 'https://www.googleapis.com/admin/directory/v1/users?key=AIzaSyAmseD3oDv7-icllWSpZA42JV1_5h8kapo&customer=my_customer&query=email:'.$email;
 
@@ -144,37 +159,12 @@ class EmailController extends Controller
     return $result;
   }
 
-  private function insert_to_google($email,$password,$first_name,$last_name)
+  /**
+   * Menginsert Email ke google
+   */
+  public function insertToGoogle($email,$password,$first_name,$last_name)
   {
-    $token_url = 'https://accounts.google.com/o/oauth2/token';
-
-    $postdata = "refresh_token=".urlencode("1/36COUpoxljLVGW-77vUho80p0g3XJAfBbGHnEj5HKsI");
-    $postdata .= "&client_id=".urlencode("1009809002386-r0pavvupg2s9lcql75hrh2qj60v8iig9.apps.googleusercontent.com");
-    $postdata .= "&grant_type=".urlencode("refresh_token");
-    $postdata .= "&client_secret=".urlencode("-wsVkUlht5a9S8px1zzRrl8T");
-
-    $post_array = array(
-        "refresh_token"=>urlencode("1/36COUpoxljLVGW-77vUho80p0g3XJAfBbGHnEj5HKsI"),
-        "client_id"=>urlencode("1009809002386-r0pavvupg2s9lcql75hrh2qj60v8iig9.apps.googleusercontent.com"),
-        "grant_type"=>urlencode("refresh_token"),
-        "client_secret"=>urlencode("-wsVkUlht5a9S8px1zzRrl8T")
-    );
-
-    $ch = curl_init($token_url);
-    curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-        'Content-Type: application/x-www-form-urlencoded'
-    ));
-    curl_setopt($ch, CURLOPT_POSTFIELDS, $postdata);
-    // Option to Return the Result, rather than just true/false
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_FAILONERROR, false);
-    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
-    // Perform the request, and save content to $result
-    $token_result = json_decode(curl_exec($ch));
-    // Close the cURL resource, and free up system resources!
-    curl_close($ch);
-    $token =  $token_result->access_token;
+    $token = $this->getTokenGoogle();
 
     $url = 'https://www.googleapis.com/admin/directory/v1/users?key=AIzaSyAmseD3oDv7-icllWSpZA42JV1_5h8kapo';
 
@@ -204,6 +194,40 @@ class EmailController extends Controller
     curl_close($ch);
 
     return $result;
+  }
+
+  /**
+   * Mengupdate password email student
+   */
+  public function resetPasswordEmail($email)
+  {
+    $token = $this->getTokenGoogle();
+
+    $url = 'https://www.googleapis.com/admin/directory/v1/users/'.$email;
+
+    $jsondata = '{
+        "password":"passwordsementara",
+        "primaryEmail":"'.$email.'",
+        "changePasswordAtNextLogin": true
+    }';
+
+    // Initialize cURL session
+    $ch = curl_init($url);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+        'Content-Type: application/json',
+        'Authorization: Bearer '.$token
+    ));
+
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $jsondata);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_FAILONERROR, false);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT');
+    $result = curl_exec($ch);
+
+    curl_close($ch);
+
+    return back()->with('pesan', "Password berhasil di reset. Silahkan login gmail dengan kata sandi:  passwordsementara");
   }
 
   public function validasiEmailDosen()

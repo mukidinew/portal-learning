@@ -5,16 +5,20 @@
 <div class="container">
 	<h2 class="page-title">Selamat Datang {{$mahasiswa_profil->nama_mahasiswa}}</h2>
     
-	<div class="alert alert-warning">
-	 <p>Email Mahasiswa:<b> {{ $mahasiswa_profil->email_mahasiswa }}</b></p>
-	 Jika E-mail student anda <b>tidak aktif</b> atau <b>salah password</b>, maka silahkan kirim email pengaduan ke <b>helpdesk-elearning@untan.ac.id</b></div>
-  @if(session('pesan'))
+   
+	<p style="font-size: 18px;">Email Mahasiswa:<b> {{ $mahasiswa_profil->email_mahasiswa }}</b></p>
+	<ul class="list-pesan">
+		<li>Jika E-mail student anda <b>tidak aktif</b></b>, maka silahkan kirim email pengaduan ke <b>helpdesk-elearning@untan.ac.id</b></li>
+		<li>Jika Anda <b>Lupa Password Email</b> klik <a href="{{url('reset-password-email/'.$mahasiswa_profil->email_mahasiswa)}}" class="btn btn-xs btn-danger">Reset Password</a>.</li>
+		<li>Untuk mengakses <b>Google Classroom</b> klik <a href="https://classroom.google.com" class="btn btn-xs btn-success">Menuju Google ClassRoom</a>. Silahkan login menggunakan email student untan Anda.</li>
+	</ul>
+  	@if(session('pesan'))
 		<div class="alert alert-warning" style="padding: 10px; margin-top: 5px;">
         {{ session('pesan') }}
     </div>
 	@endif
 
-  <span class="liner"></span>
+  <span class="liner" style="margin-top: 10px;"></span>
 
 	<div class="row">
 		<div class="col-md-8">
@@ -61,7 +65,7 @@
 			<form action="http://e-learning.untan.ac.id/learning/login/index.php" method="POST">
 				<input type="hidden" name="username" value="">
 				<input type="hidden" name="password" value="">
-				<input type="submit" class="btn btn-primary" value="Menuju E-learning">
+				<input type="submit" class="btn btn-primary" value="Menuju E-learning Moodle">
 			</form>
 
 			<div class="box-sidebarProcedure">
