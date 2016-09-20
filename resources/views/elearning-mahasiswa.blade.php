@@ -63,8 +63,8 @@
 		</div>
 		<div class="col-md-4">
 			<form action="http://e-learning.untan.ac.id/learning/login/index.php" method="POST">
-				<input type="hidden" name="username" value="">
-				<input type="hidden" name="password" value="">
+				<input type="hidden" name="username" value="{{session()->get('nim')}}">
+				<input type="hidden" name="password" value="{{session()->get('password_siakad')}}">
 				<input type="submit" class="btn btn-primary" value="Menuju E-learning Moodle">
 			</form>
 
